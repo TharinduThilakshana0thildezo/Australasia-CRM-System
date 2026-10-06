@@ -1,0 +1,9 @@
+{
+  "name": "australasia-crm-root",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --prefix australasia-crm",
+    "dev": "npm run dev --prefix australasia-crm",
+    "install": "npm install --prefix australasia-crm"
+  }
+}
