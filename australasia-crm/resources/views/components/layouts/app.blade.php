@@ -199,27 +199,18 @@
                 Reports
             </a>
 
-            <a href="{{ route('settings.index') }}"
-               class="sidebar-item {{ request()->is('settings*') ? 'active' : '' }}">
-                <i data-lucide="settings" class="icon"></i>
-                Settings
-            </a>
-
         </nav>
 
         <!-- Sidebar Footer -->
         <div class="p-4 border-t border-slate-800">
             <div class="flex items-center gap-3">
-                <div class="avatar avatar-sm avatar-indigo flex-shrink-0">
-                    {{ substr(auth()->user()->name ?? 'AD', 0, 2) }}
+                <div class="avatar avatar-sm flex-shrink-0" style="padding:0; overflow:hidden;">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.outerHTML='{{ substr(session('auth_user')['name'] ?? 'AD', 0, 2) }}'">
                 </div>
                 <div class="flex-1 min-w-0">
-                    <div class="text-xs font-semibold text-slate-200 truncate">{{ auth()->user()->name ?? 'Admin User' }}</div>
-                    <div class="text-xs text-slate-500 truncate">{{ auth()->user()->email ?? 'admin@australasia.lk' }}</div>
+                    <div class="text-xs font-semibold text-slate-200 truncate">{{ session('auth_user')['name'] ?? 'Admin User' }}</div>
+                    <div class="text-xs text-slate-500 truncate">{{ session('auth_user')['email'] ?? 'admin@australasia.lk' }}</div>
                 </div>
-                <button class="btn-ghost btn-icon" title="Logout">
-                    <i data-lucide="log-out" style="width:14px;height:14px;color:#94a3b8"></i>
-                </button>
             </div>
         </div>
 
@@ -287,8 +278,8 @@
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
                             class="flex items-center gap-2 hover:bg-slate-50 px-2 py-1.5 rounded-lg transition-colors">
-                        <div class="avatar avatar-sm avatar-indigo">
-                            {{ substr(session('auth_user')['name'] ?? 'AD', 0, 2) }}
+                        <div class="avatar avatar-sm" style="padding:0; overflow:hidden;">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.outerHTML='{{ substr(session('auth_user')['name'] ?? 'AD', 0, 2) }}'">
                         </div>
                         <div class="hidden md:block text-left">
                             <div class="text-sm font-semibold text-slate-700 leading-tight">{{ session('auth_user')['name'] ?? 'Admin' }}</div>
@@ -302,10 +293,10 @@
                          x-transition
                          class="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-50 py-1"
                          style="display:none">
-                        <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
+                        <a href="{{ route('settings.profile') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
                             <i data-lucide="user" style="width:14px;height:14px"></i> Profile
                         </a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
+                        <a href="{{ route('settings.index') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
                             <i data-lucide="settings" style="width:14px;height:14px"></i> Settings
                         </a>
                         <div class="border-t border-slate-100 my-1"></div>
@@ -345,6 +336,52 @@
 </script>
 
 {{ $scripts ?? '' }}
+
+<!-- ====== GLOBAL TOAST CONTAINER ====== -->
+<div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column-reverse;gap:0;pointer-events:none;"></div>
+
+<!-- ====== GLOBAL HELPER FUNCTIONS ====== -->
+<script>
+window.showToast = function(message, type) {
+    const colors = { success:'#10b981', error:'#ef4444', info:'#6366f1', warning:'#f59e0b' };
+    const icons  = { success:'✓', error:'✕', info:'ℹ', warning:'⚠' };
+    const c = document.getElementById('toast-container');
+    if (!c) return;
+    const t = document.createElement('div');
+    t.style.cssText = 'background:white;border-left:4px solid '+colors[type||'success']+';border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,0.14);padding:13px 18px;display:flex;align-items:center;gap:10px;min-width:280px;font-size:14px;font-weight:500;color:#1e293b;margin-top:8px;pointer-events:all;animation:toast-in 0.3s ease;';
+    t.innerHTML = '<span style="color:'+colors[type||'success']+';font-size:16px;flex-shrink:0">'+icons[type||'success']+'</span><span>'+message+'</span>';
+    c.appendChild(t);
+    setTimeout(() => { t.style.transition='opacity 0.4s,transform 0.4s'; t.style.opacity='0'; t.style.transform='translateX(20px)'; setTimeout(()=>t.remove(),400); }, 3500);
+};
+window.openModal = function(id) {
+    const m = document.getElementById(id);
+    if (m) { m.style.display='flex'; document.body.style.overflow='hidden'; lucide.createIcons(); }
+};
+window.closeModal = function(id) {
+    const m = document.getElementById(id);
+    if (m) { m.style.display='none'; document.body.style.overflow=''; }
+};
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay').forEach(m => { m.style.display='none'; });
+        document.body.style.overflow = '';
+    }
+});
+</script>
+<style>
+@keyframes toast-in { from{opacity:0;transform:translateX(20px);} to{opacity:1;transform:translateX(0);} }
+.modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px; }
+.modal-box { background:white;border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.18);width:100%;animation:modal-in 0.25s ease;max-height:90vh;overflow-y:auto; }
+@keyframes modal-in { from{opacity:0;transform:scale(0.95) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+.modal-header { display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0; }
+.modal-title { font-size:17px;font-weight:700;color:#0f172a; }
+.modal-close { width:32px;height:32px;border-radius:8px;border:none;background:#f1f5f9;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#64748b;flex-shrink:0; }
+.modal-close:hover { background:#e2e8f0; }
+.modal-body { padding:20px 24px; }
+.modal-footer { display:flex;justify-content:flex-end;gap:8px;padding:16px 24px 20px;border-top:1px solid #f1f5f9; }
+.modal-label { display:block;font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px; }
+.alert-success { background:#f0fdf4;border:1.5px solid #86efac;color:#166534;padding:14px 16px;border-radius:12px;font-size:14px;display:flex;align-items:center;gap:10px;font-weight:500; }
+</style>
 
 </body>
 </html>

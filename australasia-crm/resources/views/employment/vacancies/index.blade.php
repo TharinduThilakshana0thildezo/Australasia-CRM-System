@@ -5,6 +5,9 @@
     subtitle="All employer vacancy listings and application status"
     :breadcrumbs="[['url' => route('dashboard'), 'label' => 'Dashboard'], ['url' => route('employment.dashboard'), 'label' => 'Employment'], ['url' => '#', 'label' => 'Vacancies']]">
     <x-slot:actions>
+        <a href="{{ route('employment.vacancies.export') }}" class="btn btn-secondary btn-sm">
+            <i data-lucide="download" style="width:14px;height:14px"></i> Export
+        </a>
         <a href="{{ route('employment.vacancies.create') }}" class="btn btn-primary btn-sm">
             <i data-lucide="plus" style="width:14px;height:14px"></i> New Vacancy
         </a>
@@ -28,22 +31,28 @@
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" class="search-input" placeholder="Search job title, employer, country…">
+                <input id="vac-search" type="text" class="search-input" placeholder="Search job title, employer, country…">
             </div>
-            <select class="form-select" style="width:auto">
-                <option>All Countries</option>
-                <option>Australia</option><option>UAE</option><option>Qatar</option><option>Kuwait</option>
+            <select id="vac-country" class="form-select" style="width:auto">
+                <option value="">All Countries</option>
+                <option value="australia">Australia</option><option value="uae">UAE</option><option value="qatar">Qatar</option><option value="kuwait">Kuwait</option><option value="saudi">Saudi Arabia</option>
             </select>
-            <select class="form-select" style="width:auto">
-                <option>All Statuses</option>
-                <option>Open</option><option>Matching</option><option>Filled</option><option>Draft</option><option>Cancelled</option>
+            <select id="vac-status" class="form-select" style="width:auto">
+                <option value="">All Statuses</option>
+                <option value="open">Open</option><option value="matching">Matching</option><option value="filled">Filled</option><option value="draft">Draft</option><option value="cancelled">Cancelled</option>
             </select>
-            <select class="form-select" style="width:auto">
-                <option>All Employers</option>
-                <option>Global Workforce Solutions</option>
-                <option>Al Futtaim Manufacturing</option>
-                <option>Qatar Industrial Services</option>
+            <select id="vac-employer" class="form-select" style="width:auto">
+                <option value="">All Employers</option>
+                <option value="global">Global Workforce Solutions</option>
+                <option value="al futtaim">Al Futtaim Manufacturing</option>
+                <option value="qatar">Qatar Industrial Services</option>
+                <option value="saudi">Saudi Logistics</option>
+                <option value="kuwait">Kuwait General</option>
+                <option value="pacific">Pacific Hospitality</option>
             </select>
+            <button id="vac-clear" class="btn btn-ghost btn-sm">
+                <i data-lucide="x" style="width:14px;height:14px"></i> Clear
+            </button>
         </div>
     </div>
 </div>
@@ -79,7 +88,7 @@
                 @endphp
 
                 @foreach($vacancies as $v)
-                <tr>
+                <tr class="vac-row" data-status="{{ $v['status'] }}" data-country="{{ strtolower($v['country']) }}" data-employer="{{ strtolower($v['employer']) }}">
                     <td>
                         <a href="{{ route('employment.vacancies.show', 1) }}"
                            class="font-mono text-sm font-semibold text-indigo-600 hover:underline block">
@@ -145,5 +154,31 @@
     </div>
 </div>
 
-<script>document.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    const s = document.getElementById('vac-search');
+    const c = document.getElementById('vac-country');
+    const st = document.getElementById('vac-status');
+    const e = document.getElementById('vac-employer');
+    const cl = document.getElementById('vac-clear');
+    const rows = document.querySelectorAll('tr.vac-row');
+    function filter() {
+        const q = (s?.value||'').toLowerCase();
+        const country = (c?.value||'').toLowerCase();
+        const status = (st?.value||'').toLowerCase();
+        const emp = (e?.value||'').toLowerCase();
+        rows.forEach(r => {
+            const txt = r.textContent.toLowerCase();
+            const ok = (!q||txt.includes(q)) && (!country||r.dataset.country.includes(country)) && (!status||r.dataset.status===status) && (!emp||r.dataset.employer.includes(emp));
+            r.style.display = ok ? '' : 'none';
+        });
+    }
+    s?.addEventListener('input',filter);
+    c?.addEventListener('change',filter);
+    st?.addEventListener('change',filter);
+    e?.addEventListener('change',filter);
+    cl?.addEventListener('click',()=>{ if(s)s.value=''; if(c)c.value=''; if(st)st.value=''; if(e)e.value=''; filter(); });
+});
+</script>
 </x-layouts.app>

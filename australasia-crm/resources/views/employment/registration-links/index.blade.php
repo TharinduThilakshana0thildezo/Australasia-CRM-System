@@ -5,7 +5,7 @@
     subtitle="Manage secure one-time candidate registration links"
     :breadcrumbs="[['url' => route('dashboard'), 'label' => 'Dashboard'], ['url' => route('employment.dashboard'), 'label' => 'Employment'], ['url' => '#', 'label' => 'Registration Links']]">
     <x-slot:actions>
-        <button class="btn btn-primary btn-sm" onclick="document.getElementById('new-link-modal').classList.remove('hidden')">
+        <button class="btn btn-primary btn-sm" onclick="openModal('new-link-modal')">
             <i data-lucide="link" style="width:14px;height:14px"></i>
             Generate New Link
         </button>
@@ -104,15 +104,15 @@
                     <td>
                         <div class="flex items-center gap-1">
                             @if($link['status'] === 'expired')
-                                <button class="btn btn-primary btn-xs">
+                                <button class="btn btn-primary btn-xs" onclick="showToast('New link regenerated for {{ $link['name'] }}!','success')">
                                     <i data-lucide="refresh-cw" style="width:11px;height:11px"></i>
                                     Regenerate
                                 </button>
                             @elseif(in_array($link['status'], ['created', 'sent', 'opened']))
-                                <button class="btn btn-ghost btn-xs" title="Copy link">
+                                <button class="btn btn-ghost btn-xs" title="Copy link" onclick="navigator.clipboard.writeText('https://crm.australasia.lk/register/{{ strtolower(str_replace(' ','-',$link['id'])) }}');showToast('Link copied to clipboard!','info')">
                                     <i data-lucide="copy" style="width:13px;height:13px"></i>
                                 </button>
-                                <button class="btn btn-ghost btn-xs" title="Resend">
+                                <button class="btn btn-ghost btn-xs" title="Resend" onclick="showToast('Link resent to {{ $link['name'] }} via {{ $link['via'] }}!','success')">
                                     <i data-lucide="send" style="width:13px;height:13px"></i>
                                 </button>
                             @endif
@@ -126,11 +126,11 @@
 </div>
 
 <!-- Generate Link Modal -->
-<div id="new-link-modal" class="modal-overlay hidden">
-    <div class="modal-box">
+<div id="new-link-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal('new-link-modal')">
+    <div class="modal-box" style="max-width:520px;width:100%">
         <div class="modal-header">
             <h2 class="modal-title">Generate Registration Link</h2>
-            <button class="modal-close" onclick="document.getElementById('new-link-modal').classList.add('hidden')">
+            <button class="modal-close" onclick="closeModal('new-link-modal')">
                 <i data-lucide="x" style="width:16px;height:16px"></i>
             </button>
         </div>
@@ -139,50 +139,74 @@
                 <i data-lucide="shield" style="width:16px;height:16px;flex-shrink:0"></i>
                 <p class="text-sm">This is a <strong>one-time secure link</strong>. Once the candidate completes registration, the link becomes invalid. Set a realistic expiry date.</p>
             </div>
-            <div class="form-group">
-                <label class="form-label required">Candidate / Contact Name</label>
-                <input type="text" class="form-input" placeholder="Full name">
+            <div>
+                <label class="modal-label">Candidate / Contact Name <span style="color:#ef4444">*</span></label>
+                <input id="link-name" type="text" class="form-input" placeholder="Full name" required>
             </div>
-            <div class="form-group">
-                <label class="form-label required">Phone / WhatsApp</label>
-                <input type="tel" class="form-input" placeholder="077 XXX XXXX">
+            <div>
+                <label class="modal-label">Phone / WhatsApp <span style="color:#ef4444">*</span></label>
+                <input id="link-phone" type="tel" class="form-input" placeholder="077 XXX XXXX" required>
             </div>
-            <div class="form-group">
-                <label class="form-label">Email (optional)</label>
-                <input type="email" class="form-input" placeholder="email@example.com">
+            <div>
+                <label class="modal-label">Email (optional)</label>
+                <input id="link-email" type="email" class="form-input" placeholder="email@example.com">
             </div>
-            <div class="form-group">
-                <label class="form-label required">Link Expiry</label>
-                <select class="form-select">
+            <div>
+                <label class="modal-label">Link Expiry <span style="color:#ef4444">*</span></label>
+                <select id="link-expiry" class="form-select">
                     <option>7 days</option>
                     <option>14 days</option>
                     <option>30 days</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label class="form-label required">Send Via</label>
-                <div class="flex gap-3">
+            <div>
+                <label class="modal-label">Send Via <span style="color:#ef4444">*</span></label>
+                <div class="flex gap-4">
                     <label class="flex items-center gap-2 text-sm cursor-pointer">
-                        <input type="checkbox" class="form-input" style="width:14px;height:14px;padding:0" checked> WhatsApp
+                        <input type="checkbox" id="link-whatsapp" class="form-input" style="width:14px;height:14px;padding:0" checked> WhatsApp
                     </label>
                     <label class="flex items-center gap-2 text-sm cursor-pointer">
-                        <input type="checkbox" class="form-input" style="width:14px;height:14px;padding:0"> SMS
+                        <input type="checkbox" id="link-sms" class="form-input" style="width:14px;height:14px;padding:0"> SMS
                     </label>
                     <label class="flex items-center gap-2 text-sm cursor-pointer">
-                        <input type="checkbox" class="form-input" style="width:14px;height:14px;padding:0"> Email
+                        <input type="checkbox" id="link-email-cb" class="form-input" style="width:14px;height:14px;padding:0"> Email
                     </label>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="document.getElementById('new-link-modal').classList.add('hidden')">Cancel</button>
-            <button class="btn btn-primary">
+            <button class="btn btn-ghost btn-sm" onclick="closeModal('new-link-modal')">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="generateLink()">
                 <i data-lucide="link" style="width:14px;height:14px"></i>
-                Generate & Send Link
+                Generate &amp; Send Link
             </button>
         </div>
     </div>
 </div>
 
-<script>document.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+
+function generateLink() {
+    const name  = document.getElementById('link-name')?.value?.trim();
+    const phone = document.getElementById('link-phone')?.value?.trim();
+    if (!name) { showToast('Please enter the candidate name.','warning'); return; }
+    if (!phone) { showToast('Please enter the phone number.','warning'); return; }
+
+    const expiry  = document.getElementById('link-expiry')?.value || '7 days';
+    const linkId  = 'LNK-00' + (Math.floor(Math.random()*90)+10);
+    const viaList = [];
+    if (document.getElementById('link-whatsapp')?.checked) viaList.push('WhatsApp');
+    if (document.getElementById('link-sms')?.checked)       viaList.push('SMS');
+    if (document.getElementById('link-email-cb')?.checked)  viaList.push('Email');
+    const via = viaList.length ? viaList.join(' & ') : 'WhatsApp';
+
+    closeModal('new-link-modal');
+    // Clear fields
+    ['link-name','link-phone','link-email'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+
+    showToast(linkId + ' generated and sent to ' + name + ' via ' + via + ' (expires in ' + expiry + ')', 'success');
+}
+</script>
+
 </x-layouts.app>

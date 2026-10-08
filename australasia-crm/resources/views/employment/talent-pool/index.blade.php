@@ -5,10 +5,10 @@
     subtitle="Candidates ready and available for employer matching"
     :breadcrumbs="[['url' => route('dashboard'), 'label' => 'Dashboard'], ['url' => route('employment.dashboard'), 'label' => 'Employment'], ['url' => '#', 'label' => 'Talent Pool']]">
     <x-slot:actions>
-        <button class="btn btn-secondary btn-sm">
+        <a href="{{ route('employment.talent-pool.export') }}" class="btn btn-secondary btn-sm">
             <i data-lucide="download" style="width:14px;height:14px"></i>
             Export Pool
-        </button>
+        </a>
     </x-slot:actions>
 </x-page-header>
 
@@ -28,18 +28,18 @@
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" class="search-input" placeholder="Search by name, skills, country preference…">
+                <input id="pool-search" type="text" class="search-input" placeholder="Search by name, skills, country preference…">
             </div>
-            <select class="form-select" style="width:auto">
-                <option>All Countries</option>
-                <option>Australia</option><option>UAE</option><option>Qatar</option>
-                <option>Kuwait</option><option>Malaysia</option><option>Saudi Arabia</option>
+            <select id="pool-country" class="form-select" style="width:auto">
+                <option value="">All Countries</option>
+                <option value="australia">Australia</option><option value="uae">UAE</option><option value="qatar">Qatar</option>
+                <option value="kuwait">Kuwait</option><option value="malaysia">Malaysia</option><option value="saudi">Saudi Arabia</option>
             </select>
-            <select class="form-select" style="width:auto">
-                <option>All Job Types</option>
-                <option>Warehouse Operator</option><option>Factory Worker</option>
-                <option>Construction</option><option>Hospitality</option><option>Driver</option>
-                <option>Healthcare</option><option>Agriculture</option>
+            <select id="pool-job" class="form-select" style="width:auto">
+                <option value="">All Job Types</option>
+                <option value="warehouse">Warehouse Operator</option><option value="factory">Factory Worker</option>
+                <option value="construction">Construction</option><option value="hospitality">Hospitality</option><option value="driver">Driver</option>
+                <option value="healthcare">Healthcare</option><option value="agriculture">Agriculture</option>
             </select>
             <select class="form-select" style="width:auto">
                 <option>All Experience</option>
@@ -72,7 +72,7 @@
     @endphp
 
     @foreach($pool as $c)
-    <div class="card hover:shadow-card-hover transition-shadow">
+    <div class="card hover:shadow-card-hover transition-shadow pool-card">
         <div class="card-body">
             <!-- Header -->
             <div class="flex items-start justify-between mb-3">
@@ -137,5 +137,36 @@
     @endforeach
 </div>
 
-<script>document.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+
+    const searchInput = document.getElementById('pool-search');
+    const countrySelect = document.getElementById('pool-country');
+    const jobSelect = document.getElementById('pool-job');
+    const cards = document.querySelectorAll('.pool-card');
+
+    function filterCards() {
+        const query = (searchInput?.value || '').toLowerCase();
+        const country = (countrySelect?.value || '').toLowerCase();
+        const job = (jobSelect?.value || '').toLowerCase();
+
+        let visible = 0;
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            const matchSearch = !query || text.includes(query);
+            const matchCountry = !country || text.includes(country);
+            const matchJob = !job || text.includes(job.replace('warehouse operator','warehouse').replace('factory worker','factory').replace('construction worker','construction').replace('heavy vehicle driver','heavy vehicle').replace('agriculture worker','agriculture'));
+            const show = matchSearch && matchCountry && matchJob;
+            card.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+    }
+
+    searchInput?.addEventListener('input', filterCards);
+    countrySelect?.addEventListener('change', filterCards);
+    jobSelect?.addEventListener('change', filterCards);
+});
+</script>
+
 </x-layouts.app>

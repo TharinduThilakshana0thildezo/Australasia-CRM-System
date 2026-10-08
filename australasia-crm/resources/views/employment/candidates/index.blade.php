@@ -5,10 +5,10 @@
     subtitle="All registered candidates in the Foreign Employment pipeline"
     :breadcrumbs="[['url' => route('dashboard'), 'label' => 'Dashboard'], ['url' => route('employment.dashboard'), 'label' => 'Employment'], ['url' => '#', 'label' => 'Candidates']]">
     <x-slot:actions>
-        <button class="btn btn-secondary btn-sm">
+        <a href="{{ route('employment.candidates.export') }}" class="btn btn-secondary btn-sm">
             <i data-lucide="download" style="width:14px;height:14px"></i>
             Export
-        </button>
+        </a>
         <a href="{{ route('employment.candidates.create') }}" class="btn btn-primary btn-sm">
             <i data-lucide="user-plus" style="width:14px;height:14px"></i>
             Register Candidate
@@ -25,47 +25,43 @@
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" class="search-input" placeholder="Search name, NIC, phone, candidate ID…">
+                <input id="cand-search" type="text" class="search-input" placeholder="Search name, NIC, phone, candidate ID…">
             </div>
 
             <!-- Status filter -->
-            <select class="form-select" style="width:auto">
+            <select id="cand-status" class="form-select" style="width:auto">
                 <option value="">All Statuses</option>
-                <option>Lead</option>
-                <option>Registered</option>
-                <option>Documents Pending</option>
-                <option>Under Screening</option>
-                <option>Correction Required</option>
-                <option>Ready</option>
-                <option>Talent Pool</option>
-                <option>Employer Review</option>
-                <option>Selected</option>
-                <option>Visa Processing</option>
-                <option>Deployed</option>
-                <option>Refund</option>
-                <option>Closed</option>
+                <option value="lead">Lead</option>
+                <option value="registered">Registered</option>
+                <option value="documents_pending">Documents Pending</option>
+                <option value="correction_required">Correction Required</option>
+                <option value="talent_pool">Talent Pool</option>
+                <option value="visa_processing">Visa Processing</option>
+                <option value="visa_approved">Visa Approved</option>
+                <option value="deployed">Deployed</option>
+                <option value="refund">Refund</option>
+                <option value="checklist">Checklist</option>
             </select>
 
             <!-- Handler filter -->
-            <select class="form-select" style="width:auto">
+            <select id="cand-handler" class="form-select" style="width:auto">
                 <option value="">All Handlers</option>
-                <option>Kasun Bandara</option>
-                <option>Nimal Jayawardena</option>
-                <option>Priya Hewage</option>
-                <option>Amila Perera</option>
+                <option value="kasun">Kasun Bandara</option>
+                <option value="nimal">Nimal Jayawardena</option>
+                <option value="priya">Priya Hewage</option>
+                <option value="amila">Amila Perera</option>
             </select>
 
             <!-- Source filter -->
-            <select class="form-select" style="width:auto">
+            <select id="cand-source" class="form-select" style="width:auto">
                 <option value="">All Sources</option>
-                <option>Walk-in</option>
-                <option>Referral</option>
-                <option>Agent</option>
-                <option>Online Enquiry</option>
-                <option>Employer Contact</option>
+                <option value="walk-in">Walk-in</option>
+                <option value="referral">Referral</option>
+                <option value="agent">Agent</option>
+                <option value="online">Online Enquiry</option>
             </select>
 
-            <button class="btn btn-ghost btn-sm">
+            <button id="cand-clear" class="btn btn-ghost btn-sm">
                 <i data-lucide="x" style="width:14px;height:14px"></i>
                 Clear filters
             </button>
@@ -74,12 +70,12 @@
         <!-- Status quick-filter pills -->
         <div class="filter-bar mt-3">
             <span class="text-xs text-slate-500 font-medium mr-1">Quick:</span>
-            <button class="filter-pill active">All (1,284)</button>
-            <button class="filter-pill">Docs Pending (98)</button>
-            <button class="filter-pill">Correction (11)</button>
-            <button class="filter-pill">Ready (318)</button>
-            <button class="filter-pill">Visa (67)</button>
-            <button class="filter-pill">Refund (14)</button>
+            <button class="filter-pill active" data-pill="">All (1,284)</button>
+            <button class="filter-pill" data-pill="documents_pending">Docs Pending (98)</button>
+            <button class="filter-pill" data-pill="correction_required">Correction (11)</button>
+            <button class="filter-pill" data-pill="talent_pool">Ready (318)</button>
+            <button class="filter-pill" data-pill="visa_processing">Visa (67)</button>
+            <button class="filter-pill" data-pill="refund">Refund (14)</button>
         </div>
     </div>
 </div>
@@ -102,7 +98,7 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th><input type="checkbox" class="form-input" style="width:16px;height:16px;padding:0"></th>
+                    <th><input id="select-all-cand" type="checkbox" class="form-input" style="width:16px;height:16px;padding:0"></th>
                     <th>Candidate</th>
                     <th>NIC / Passport</th>
                     <th>Contact</th>
@@ -131,8 +127,8 @@
                 @endphp
 
                 @foreach($candidates as $candidate)
-                <tr>
-                    <td><input type="checkbox" class="form-input" style="width:16px;height:16px;padding:0"></td>
+                <tr class="cand-row" data-status="{{ $candidate['status'] }}" data-handler="{{ strtolower(str_replace([' B.',' J.',' H.',' P.'],['','','',''], $candidate['handler'])) }}" data-source="{{ strtolower($candidate['source']) }}">
+                    <td><input type="checkbox" class="cand-check form-input" style="width:16px;height:16px;padding:0"></td>
                     <td>
                         <div class="flex items-center gap-3">
                             <div class="avatar avatar-sm avatar-{{ ['indigo','emerald','violet','amber','cyan','rose'][array_sum(array_map('ord', str_split(substr($candidate['id'], -1)))) % 6] }}">
@@ -249,7 +245,70 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+
+    // ── Filter state ──
+    const searchInput  = document.getElementById('cand-search');
+    const statusSelect = document.getElementById('cand-status');
+    const handlerSelect= document.getElementById('cand-handler');
+    const sourceSelect = document.getElementById('cand-source');
+    const clearBtn     = document.getElementById('cand-clear');
+    const pills        = document.querySelectorAll('.filter-pill[data-pill]');
+    const rows         = document.querySelectorAll('tbody tr.cand-row');
+
+    function applyFilters() {
+        const q       = (searchInput?.value  || '').toLowerCase();
+        const status  = (statusSelect?.value || '').toLowerCase();
+        const handler = (handlerSelect?.value|| '').toLowerCase();
+        const source  = (sourceSelect?.value || '').toLowerCase();
+
+        rows.forEach(row => {
+            const text    = row.textContent.toLowerCase();
+            const rowStatus  = row.dataset.status  || '';
+            const rowHandler = row.dataset.handler || '';
+            const rowSource  = row.dataset.source  || '';
+
+            const ok = (!q      || text.includes(q))
+                    && (!status  || rowStatus.includes(status))
+                    && (!handler || rowHandler.includes(handler))
+                    && (!source  || rowSource.includes(source));
+
+            row.style.display = ok ? '' : 'none';
+        });
+    }
+
+    // Pill quick-filters set the status dropdown
+    pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            if (statusSelect) statusSelect.value = pill.dataset.pill;
+            applyFilters();
+        });
+    });
+
+    searchInput?.addEventListener('input',  applyFilters);
+    statusSelect?.addEventListener('change', applyFilters);
+    handlerSelect?.addEventListener('change',applyFilters);
+    sourceSelect?.addEventListener('change', applyFilters);
+
+    clearBtn?.addEventListener('click', () => {
+        if (searchInput)  searchInput.value  = '';
+        if (statusSelect) statusSelect.value = '';
+        if (handlerSelect)handlerSelect.value= '';
+        if (sourceSelect) sourceSelect.value = '';
+        pills.forEach(p => p.classList.remove('active'));
+        document.querySelector('.filter-pill[data-pill=""]')?.classList.add('active');
+        applyFilters();
+    });
+
+    // Select-all checkbox
+    const selectAll = document.getElementById('select-all-cand');
+    selectAll?.addEventListener('change', () => {
+        document.querySelectorAll('.cand-check').forEach(cb => cb.checked = selectAll.checked);
+    });
+});
 </script>
 
 </x-layouts.app>

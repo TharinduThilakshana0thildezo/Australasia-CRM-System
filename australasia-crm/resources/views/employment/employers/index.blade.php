@@ -5,9 +5,9 @@
     subtitle="Manage partner employers and their vacancy relationships"
     :breadcrumbs="[['url' => route('dashboard'), 'label' => 'Dashboard'], ['url' => route('employment.dashboard'), 'label' => 'Employment'], ['url' => '#', 'label' => 'Employers']]">
     <x-slot:actions>
-        <button class="btn btn-secondary btn-sm">
+        <a href="{{ route('employment.employers.export') }}" class="btn btn-secondary btn-sm">
             <i data-lucide="download" style="width:14px;height:14px"></i> Export
-        </button>
+        </a>
         <a href="{{ route('employment.employers.create') }}" class="btn btn-primary btn-sm">
             <i data-lucide="plus" style="width:14px;height:14px"></i> New Employer
         </a>
