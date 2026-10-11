@@ -5,7 +5,7 @@
     subtitle="Centralised document management for all candidates and students"
     :breadcrumbs="[['url' => route('dashboard'), 'label' => 'Dashboard'], ['url' => '#', 'label' => 'Documents']]">
     <x-slot:actions>
-        <button class="btn btn-secondary btn-sm">
+        <button onclick="openModal('upload-modal')" class="btn btn-secondary btn-sm">
             <i data-lucide="upload" style="width:14px;height:14px"></i>
             Upload Document
         </button>
@@ -134,6 +134,59 @@
             <button class="btn btn-ghost btn-sm">3</button>
             <button class="btn btn-ghost btn-sm">Next →</button>
         </div>
+    </div>
+</div>
+
+{{-- Upload Document Modal --}}
+<div id="upload-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box" style="max-width:500px">
+        <div class="modal-header">
+            <span class="modal-title">Upload Document</span>
+            <button onclick="closeModal('upload-modal')" class="modal-close"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+        </div>
+        <form method="POST" action="#" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-body space-y-4">
+                <div class="form-group">
+                    <label class="form-label required">Person Name / ID</label>
+                    <input type="text" class="form-input" placeholder="Search and select person..." required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label required">Document Type</label>
+                        <select class="form-select" required>
+                            <option value="">Select type...</option>
+                            <option>Passport</option>
+                            <option>NIC</option>
+                            <option>Medical Certificate</option>
+                            <option>Skills Certificate</option>
+                            <option>Police Clearance</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">Module</label>
+                        <select class="form-select" required>
+                            <option>Employment</option>
+                            <option>Consultancy</option>
+                            <option>Academy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:bg-slate-50 transition-colors">
+                    <input type="file" id="doc_file" class="hidden">
+                    <label for="doc_file" class="cursor-pointer">
+                        <i data-lucide="upload-cloud" class="mx-auto text-indigo-500 mb-2" style="width:24px;height:24px"></i>
+                        <span class="text-sm font-semibold text-indigo-600 block mb-1">Click to browse or drag file here</span>
+                        <span class="text-xs text-slate-400">PDF, JPG, PNG up to 10MB</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeModal('upload-modal')" class="btn btn-ghost">Cancel</button>
+                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); closeModal('upload-modal');">Upload Document</button>
+            </div>
+        </form>
     </div>
 </div>
 

@@ -52,6 +52,11 @@ $map = [
     'submitted'         => ['class' => 'badge-registered', 'label' => 'Submitted'],
     'interview'         => ['class' => 'badge-employer',   'label' => 'Interview'],
     'not_selected'      => ['class' => 'badge-closed',     'label' => 'Not Selected'],
+    'offer_received'    => ['class' => 'badge-approved',   'label' => 'Offer Received'],
+    'conditional_offer' => ['class' => 'badge-pending',    'label' => 'Conditional Offer'],
+    'applied'           => ['class' => 'badge-processing', 'label' => 'Applied'],
+    'enrolled'          => ['class' => 'badge-approved',   'label' => 'Enrolled'],
+    'correction_required' => ['class' => 'badge-correction', 'label' => 'Correction Req.'],
 
     // Task statuses
     'in_progress'       => ['class' => 'badge-processing', 'label' => 'In Progress'],
@@ -63,6 +68,35 @@ $map = [
     'active'            => ['class' => 'badge-active',     'label' => 'Active'],
     'inactive'          => ['class' => 'badge-inactive',   'label' => 'Inactive'],
     'processing'        => ['class' => 'badge-processing', 'label' => 'Processing'],
+
+    // ── Academy module statuses ──────────────────────────────────────────────
+    // Course statuses
+    'paused'            => ['class' => 'badge-warning',    'label' => 'Paused'],
+    'archived'          => ['class' => 'badge-inactive',   'label' => 'Archived'],
+
+    // Batch statuses
+    'scheduled'         => ['class' => 'badge-registered', 'label' => 'Scheduled'],
+    'running'           => ['class' => 'badge-active',     'label' => 'Running'],
+
+    // Enrollment statuses
+    'waitlisted'        => ['class' => 'badge-pending',    'label' => 'Waitlisted'],
+    'enquiry'           => ['class' => 'badge-lead',       'label' => 'Enquiry'],
+
+    // Exam/result statuses
+    'marks_pending'     => ['class' => 'badge-pending',    'label' => 'Marks Pending'],
+    'published'         => ['class' => 'badge-approved',   'label' => 'Published'],
+    'pass'              => ['class' => 'badge-approved',   'label' => 'Pass'],
+    'fail'              => ['class' => 'badge-rejected',   'label' => 'Fail'],
+    'resit'             => ['class' => 'badge-correction', 'label' => 'Re-sit'],
+
+    // Certificate statuses
+    'issued'            => ['class' => 'badge-approved',   'label' => 'Issued'],
+    'voided'            => ['class' => 'badge-rejected',   'label' => 'Voided'],
+    'reissued'          => ['class' => 'badge-processing', 'label' => 'Reissued'],
+
+    // Registration link statuses
+    'expired'           => ['class' => 'badge-overdue',    'label' => 'Expired'],
+    'deactivated'       => ['class' => 'badge-inactive',   'label' => 'Deactivated'],
 ];
 
 $statusKey = strtolower($status);

@@ -125,13 +125,24 @@
 
                 <div x-show="open" x-collapse class="sidebar-sub-menu">
                     <a href="{{ route('consultancy.dashboard') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.dashboard') ? 'active' : '' }}">Dashboard</a>
+                    <a href="{{ route('consultancy.leads.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.leads*') ? 'active' : '' }}">Leads</a>
                     <a href="{{ route('consultancy.students.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.students*') ? 'active' : '' }}">Students</a>
+                    <a href="{{ route('consultancy.documents.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.documents*') ? 'active' : '' }}">
+                        Documents
+                        <span class="sidebar-badge">23</span>
+                    </a>
                     <a href="{{ route('consultancy.counselling.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.counselling*') ? 'active' : '' }}">Counselling</a>
                     <a href="{{ route('consultancy.institutions.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.institutions*') ? 'active' : '' }}">Institutions</a>
+                    <a href="{{ route('consultancy.courses.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.courses*') ? 'active' : '' }}">Courses</a>
                     <a href="{{ route('consultancy.applications.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.applications*') ? 'active' : '' }}">Applications</a>
-                    <a href="{{ route('consultancy.visas.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.visas*') ? 'active' : '' }}">Visa</a>
+                    <a href="{{ route('consultancy.offers.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.offers*') ? 'active' : '' }}">Offers</a>
+                    <a href="{{ route('consultancy.visas.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.visas*') ? 'active' : '' }}">Visa Cases</a>
+                    <a href="{{ route('consultancy.registrations.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.registrations*') ? 'active' : '' }}">Registrations</a>
                     <a href="{{ route('consultancy.payments.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.payments*') ? 'active' : '' }}">Payments</a>
                     <a href="{{ route('consultancy.enrollment.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.enrollment*') ? 'active' : '' }}">Enrollment</a>
+                    <a href="{{ route('consultancy.registration-links.index') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.registration-links*') ? 'active' : '' }}">Reg. Links</a>
+                    <a href="{{ route('consultancy.reports') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.reports') ? 'active' : '' }}">Reports</a>
+                    <a href="{{ route('consultancy.settings') }}" class="sidebar-sub-item {{ request()->routeIs('consultancy.settings') ? 'active' : '' }}">Settings</a>
                 </div>
             </div>
 
@@ -153,12 +164,19 @@
                 <div x-show="open" x-collapse class="sidebar-sub-menu">
                     <a href="{{ route('academy.dashboard') }}" class="sidebar-sub-item {{ request()->routeIs('academy.dashboard') ? 'active' : '' }}">Dashboard</a>
                     <a href="{{ route('academy.students.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.students*') ? 'active' : '' }}">Students</a>
+                    <a href="{{ route('academy.registration-links.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.registration-links*') ? 'active' : '' }}">Reg. Links</a>
                     <a href="{{ route('academy.courses.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.courses*') ? 'active' : '' }}">Courses</a>
                     <a href="{{ route('academy.batches.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.batches*') ? 'active' : '' }}">Batches</a>
+                    <a href="{{ route('academy.trainers.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.trainers*') ? 'active' : '' }}">Trainers</a>
                     <a href="{{ route('academy.enrollments.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.enrollments*') ? 'active' : '' }}">Enrollments</a>
-                    <a href="{{ route('academy.attendance.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.attendance*') ? 'active' : '' }}">Attendance</a>
+                    <a href="{{ route('academy.payments.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.payments*') ? 'active' : '' }}">Payments</a>
+                    <a href="{{ route('academy.sessions.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.sessions*') ? 'active' : '' }}">Sessions</a>
+                    <a href="{{ route('academy.attendance.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.attendance*') && !request()->routeIs('academy.attendance.makeup') ? 'active' : '' }}">Attendance</a>
+                    <a href="{{ route('academy.attendance.makeup') }}" class="sidebar-sub-item {{ request()->routeIs('academy.attendance.makeup*') ? 'active' : '' }}">Make-up Sessions</a>
                     <a href="{{ route('academy.exams.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.exams*') ? 'active' : '' }}">Exams</a>
                     <a href="{{ route('academy.certificates.index') }}" class="sidebar-sub-item {{ request()->routeIs('academy.certificates*') ? 'active' : '' }}">Certificates</a>
+                    <a href="{{ route('academy.reports') }}" class="sidebar-sub-item {{ request()->routeIs('academy.reports') ? 'active' : '' }}">Reports</a>
+                    <a href="{{ route('academy.settings') }}" class="sidebar-sub-item {{ request()->routeIs('academy.settings*') ? 'active' : '' }}">Settings</a>
                 </div>
             </div>
 
